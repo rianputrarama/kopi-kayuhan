@@ -1,0 +1,264 @@
+
+---
+import { getCollection } from "astro:content";
+
+const stories = await getCollection("stories");
+
+const sortedStories = stories.sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+---
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="description" content="Kumpulan cerita Kopi & Kayuhan." />
+  <title>Semua Cerita — Kopi & Kayuhan</title>
+</head>
+<body>
+  <header class="header">
+    <a href="/">Kopi & Kayuhan</a>
+    <nav>
+      <a href="/">Beranda</a>
+      <a href="/cerita/" aria-current="page">Cerita</a>
+      <a href="/#galeri">Galeri</a>
+      <a href="/#tentang">Tentang</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="intro">
+      <span class="eyebrow">CATATAN PERJALANAN</span>
+      <h1>Semua Cerita</h1>
+      <p>
+        Kumpulan cerita tentang perjalanan, secangkir kopi,
+        dan momen sederhana yang layak dikenang.
+      </p>
+    </section>
+
+    <section class="stories">
+      {sortedStories.length > 0 ? (
+        <div class="grid">
+          {sortedStories.map((story) => (
+            <article class="card">
+              <a href={`/cerita/${story.id}/`} class="cover">
+                <img
+                  src={story.data.cover}
+                  alt={story.data.title}
+                  loading="lazy"
+                />
+              </a>
+
+              <div class="content">
+                <span class="category">{story.data.category}</span>
+                <h2>
+                  <a href={`/cerita/${story.id}/`}>
+                    {story.data.title}
+                  </a>
+                </h2>
+                <p>{story.data.description}</p>
+                <div class="meta">
+                  <time datetime={story.data.date.toISOString()}>
+                    {formatDate(story.data.date)}
+                  </time>
+                  {story.data.location && (
+                    <span>{story.data.location}</span>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p>Belum ada cerita yang diterbitkan.</p>
+      )}
+    </section>
+  </main>
+
+  <footer>
+    <a href="/">Kopi & Kayuhan</a>
+    <p>Secangkir kopi, sejuta cerita.</p>
+  </footer>
+</body>
+</html>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #f8f7f3;
+    color: #292c25;
+    font-family: "DM Sans", Arial, sans-serif;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .header {
+    min-height: 78px;
+    padding: 20px max(24px, calc((100% - 1120px) / 2));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    border-bottom: 1px solid #e9e6dc;
+  }
+
+  .header > a,
+  footer > a {
+    font-family: Georgia, serif;
+    font-size: 21px;
+    font-weight: bold;
+  }
+
+  nav {
+    display: flex;
+    gap: 28px;
+    color: #686a60;
+    font-size: 14px;
+  }
+
+  nav a[aria-current="page"] {
+    color: #59634a;
+    font-weight: bold;
+  }
+
+  main {
+    width: min(1120px, calc(100% - 48px));
+    margin: auto;
+  }
+
+  .intro {
+    padding: 75px 0 45px;
+    max-width: 650px;
+  }
+
+  .eyebrow,
+  .category {
+    color: #7a8069;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+  }
+
+  h1, h2 {
+    font-family: Georgia, serif;
+  }
+
+  h1 {
+    margin: 14px 0;
+    font-size: clamp(38px, 6vw, 54px);
+  }
+
+  .intro p {
+    color: #74756c;
+    line-height: 1.8;
+  }
+
+  .stories {
+    padding-bottom: 90px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid #e8e5db;
+  }
+
+  .cover {
+    display: block;
+    height: 220px;
+    overflow: hidden;
+  }
+
+  .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .content {
+    padding: 22px;
+  }
+
+  h2 {
+    font-size: 23px;
+    line-height: 1.35;
+  }
+
+  .content p {
+    color: #74756c;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+    color: #929187;
+    font-size: 11px;
+  }
+
+  footer {
+    padding: 30px 24px;
+    border-top: 1px solid #e9e6dc;
+    text-align: center;
+  }
+
+  footer p {
+    color: #85857c;
+    font-size: 12px;
+  }
+
+  @media (max-width: 760px) {
+    .header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    nav {
+      width: 100%;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    main {
+      width: calc(100% - 36px);
+    }
+
+    .intro {
+      padding-top: 55px;
+    }
+
+    .grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cover {
+      height: 230px;
+    }
+  }
+</style>

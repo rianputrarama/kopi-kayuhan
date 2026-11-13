@@ -1,0 +1,222 @@
+
+---
+import { getCollection, render } from "astro:content";
+
+export async function getStaticPaths() {
+  const stories = await getCollection("stories");
+
+  return stories.map((story) => ({
+    params: { slug: story.id },
+    props: { story },
+  }));
+}
+
+const { story } = Astro.props;
+const { Content } = await render(story);
+
+const formatDate = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+}).format(story.data.date);
+---
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="description" content={story.data.description} />
+  <title>{story.data.title} — Kopi & Kayuhan</title>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">Kopi & Kayuhan</a>
+    <nav>
+      <a href="/">Beranda</a>
+      <a href="/cerita/">Cerita</a>
+      <a href="/#galeri">Galeri</a>
+      <a href="/#tentang">Tentang</a>
+    </nav>
+  </header>
+
+  <main>
+    <a href="/cerita/" class="back">← Kembali ke semua cerita</a>
+
+    <article>
+      <div class="article-heading">
+        <span class="category">{story.data.category}</span>
+        <h1>{story.data.title}</h1>
+        <p class="description">{story.data.description}</p>
+
+        <div class="meta">
+          <time datetime={story.data.date.toISOString()}>
+            {formatDate}
+          </time>
+          {story.data.location && <span>{story.data.location}</span>}
+        </div>
+      </div>
+
+      <img
+        class="cover"
+        src={story.data.cover}
+        alt={story.data.title}
+      />
+
+      <div class="article-body">
+        <Content />
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <a href="/">Kopi & Kayuhan</a>
+    <p>Secangkir kopi, sejuta cerita.</p>
+  </footer>
+</body>
+</html>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #f8f7f3;
+    color: #292c25;
+    font-family: "DM Sans", Arial, sans-serif;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  header {
+    min-height: 78px;
+    padding: 20px max(24px, calc((100% - 1120px) / 2));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid #e9e6dc;
+  }
+
+  .brand {
+    font-family: Georgia, serif;
+    font-size: 21px;
+    font-weight: bold;
+  }
+
+  nav {
+    display: flex;
+    gap: 28px;
+    color: #686a60;
+    font-size: 14px;
+  }
+
+  main {
+    width: min(850px, calc(100% - 48px));
+    margin: auto;
+    padding: 55px 0 90px;
+  }
+
+  .back {
+    color: #59634a;
+    font-size: 13px;
+    font-weight: bold;
+  }
+
+  .article-heading {
+    padding: 45px 0 30px;
+  }
+
+  .category {
+    color: #7a8069;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+  }
+
+  h1 {
+    margin: 15px 0;
+    font-family: Georgia, serif;
+    font-size: clamp(36px, 6vw, 54px);
+    line-height: 1.2;
+  }
+
+  .description {
+    color: #74756c;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  .meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 24px;
+    color: #929187;
+    font-size: 12px;
+  }
+
+  .cover {
+    width: 100%;
+    max-height: 480px;
+    object-fit: cover;
+  }
+
+  .article-body {
+    max-width: 700px;
+    margin: 45px auto 0;
+    color: #45463f;
+    font-size: 16px;
+    line-height: 2;
+  }
+
+  .article-body :global(h2),
+  .article-body :global(h3) {
+    margin-top: 35px;
+    color: #292c25;
+    font-family: Georgia, serif;
+  }
+
+  .article-body :global(img) {
+    max-width: 100%;
+    height: auto;
+  }
+
+  footer {
+    padding: 30px 24px;
+    border-top: 1px solid #e9e6dc;
+    text-align: center;
+  }
+
+  footer a {
+    font-family: Georgia, serif;
+    font-weight: bold;
+  }
+
+  footer p {
+    color: #85857c;
+    font-size: 12px;
+  }
+
+  @media (max-width: 600px) {
+    header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    nav {
+      width: 100%;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    main {
+      width: calc(100% - 36px);
+    }
+  }
+</style>

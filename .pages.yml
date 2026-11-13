@@ -1,0 +1,74 @@
+
+media:
+  - name: images
+    label: Foto Kopi & Kayuhan
+    input: public/images
+    output: /images
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+    categories:
+      - image
+    rename: safe
+
+content:
+  - name: stories
+    label: Cerita
+    type: collection
+    path: src/content/stories
+    format: yaml-frontmatter
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields:
+        - title
+        - category
+        - date
+      sort: date
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Judul cerita
+        type: string
+        required: true
+
+      - name: description
+        label: Ringkasan cerita
+        type: text
+        required: true
+
+      - name: date
+        label: Tanggal cerita
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+
+      - name: category
+        label: Kategori
+        type: string
+        required: true
+
+      - name: cover
+        label: Foto sampul
+        type: image
+        required: true
+        options:
+          media: images
+          path: .
+
+      - name: location
+        label: Lokasi
+        type: string
+
+      - name: body
+        label: Isi cerita
+        type: rich-text
+        options:
+          format: markdown
+          media: images
+          path: .

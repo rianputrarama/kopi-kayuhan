@@ -61,6 +61,16 @@ content:
           media: images
           path: .
 
+      - name: gallery
+        label: Galeri foto (maksimal 5)
+        type: image
+        options:
+          media: images
+          path: .
+          multiple:
+            max: 5
+          unique: true
+
       - name: location
         label: Lokasi
         type: string

@@ -14,6 +14,7 @@ const stories = defineCollection({
     date: z.coerce.date(),
     category: z.string(),
     cover: z.string(),
+    gallery: z.array(z.string()).max(5).default([]),
     location: z.string().optional(),
   }),
 });

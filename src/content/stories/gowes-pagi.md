@@ -1,4 +1,3 @@
-
 ---
 title: "Menikmati Gowes di Pagi Hari"
 description: "Cerita perjalanan bersepeda bersama teman-teman."
